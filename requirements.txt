@@ -31,7 +31,7 @@ speedtest-cli
 spotipy
 tgcrypto
 urllib3
-uvloop
+program 
 flask
 gunicorn==20.1.0
 yt-dlp
