@@ -18,9 +18,9 @@ load_dotenv()
 
 # Get it from my.telegram.org
 
-API_ID = int(getenv("API_ID", "25610347"))
+API_ID = int(getenv("API_ID", "12398605"))
 
-API_HASH = getenv("API_HASH", "c421be09ee9b9af3d13dbf9abb03483c")
+API_HASH = getenv("API_HASH", "0233c5b5cc8e6657d658cac2602cd630")
 
 
 ## Get it from @Botfather in Telegram.
@@ -45,7 +45,7 @@ DURATION_LIMIT_MIN = int(
 
 EXTRA_PLUGINS = getenv(
     "EXTRA_PLUGINS",
-    "True",
+    "",
 )
 
 # Fill True if you want to load extra plugins
@@ -70,12 +70,12 @@ SONG_DOWNLOAD_DURATION = int(
 
 
 # You'll need a Private Group ID for this.
-LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1002512951867"))
+LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1003676804917"))
 
 
 # Your User ID.
 OWNER_ID = list(
-    map(int, getenv("OWNER_ID", "8140988754").split())
+    map(int, getenv("OWNER_ID", "7967418569").split())
 )  # Input type must be interger
 
 
@@ -114,15 +114,15 @@ AUTO_GCAST_MSG = getenv("AUTO_GCAST_MSG", "")
 
 # Only  Links formats are  accepted for this Var value.
 SUPPORT_CHANNEL = getenv(
-    "SUPPORT_CHANNEL", "https://t.me/ABOUT_VENOM_OP"
-)  # Example:- https://t.me/ABOUT_VENOM_OP
+    "SUPPORT_CHANNEL", "https://t.me/+5JPlPuUmw7gyOGZl"
+)  # Example:- https://t.me/+5JPlPuUmw7gyOGZl
 SUPPORT_GROUP = getenv(
-    "SUPPORT_CHANNEL", "https://t.me/NEO_BOT_SUPPORT"
-)  # Example:- https://t.me/NEO_BOT_SUPPORT
+    "SUPPORT_CHANNEL", "https://t.me/+MK3fgMGZu6JiYjQ1"
+)  # Example:- https://t.me/+MK3fgMGZu6JiYjQ1
 
 SUPPORT_CHAT = getenv(
-    "SUPPORT_CHANNEL", "https://t.me/FEELING_SMILEY"
-)  # Example:- https://t.me/FEELING_SMILEY
+    "SUPPORT_CHANNEL", "https://t.me/+MK3fgMGZu6JiYjQ1"
+)  # Example:- https://t.me/+MK3fgMGZu6JiYjQ1
 # Set it in True if you want to leave your assistant after a certain amount of time. [Set time via AUTO_LEAVE_ASSISTANT_TIME]
 AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", False)
 
