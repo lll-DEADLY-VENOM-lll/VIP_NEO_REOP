@@ -1,23 +1,26 @@
 #
 # Copyright (C) 2024 by THE-VIP-BOY-OP@Github, < https://github.com/THE-VIP-BOY-OP >.
 #
-# This file is part of < https://github.com/THE-VIP-BOY-OP/VIP-MUSIC > project,
-# and is released under the MIT License.
-# Please see < https://github.com/THE-VIP-BOY-OP/VIP-MUSIC/blob/master/LICENSE >
-#
-# All rights reserved.
+
+import asyncio
+
+# --- EVENT LOOP FIX FOR PYTHON 3.10+ ---
+# Pyrogram import hone se pehle loop set karna zaroori hai
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+# ---------------------------------------
 
 from VIPMUSIC.core.bot import VIPBot
 from VIPMUSIC.core.dir import dirr
 from VIPMUSIC.core.git import git
 from VIPMUSIC.core.userbot import Userbot
 from VIPMUSIC.misc import dbb, heroku, sudo
-
 from .logging import LOGGER
 
-# Bot Client
-
-# Directories
+# Directories setup
 dirr()
 
 # Check Git Updates
@@ -32,9 +35,8 @@ heroku()
 # Load Sudo Users from DB
 sudo()
 
+# Bot Clients
 app = VIPBot()
-
-# Assistant Client
 userbot = Userbot()
 
 from .platforms import *
@@ -46,4 +48,5 @@ Apple = AppleAPI()
 Resso = RessoAPI()
 SoundCloud = SoundAPI()
 Telegram = TeleAPI()
+
 HELPABLE = {}
