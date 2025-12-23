@@ -45,7 +45,7 @@ DURATION_LIMIT_MIN = int(
 
 EXTRA_PLUGINS = getenv(
     "EXTRA_PLUGINS",
-    "",
+    "false",
 )
 
 # Fill True if you want to load extra plugins
@@ -217,67 +217,67 @@ autoclean = []
 
 START_IMG_URL = getenv(
     "START_IMG_URL",
-    "https://iili.io/FRcO7WP.md.jpg",
+    "https://graph.org/file/cecbf4414a6b4ff48b297-482a571d7d06c437a2.jpg",
 )
 
 PING_IMG_URL = getenv(
     "PING_IMG_URL",
-    "https://iili.io/FRSvSXs.md.jpg",
+    "https://graph.org/file/062f851978de03808885f-eb92d34cde8511a7d6.jpg",
 )
 
 PLAYLIST_IMG_URL = getenv(
     "PLAYLIST_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 GLOBAL_IMG_URL = getenv(
     "GLOBAL_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 STATS_IMG_URL = getenv(
     "STATS_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 TELEGRAM_AUDIO_URL = getenv(
     "TELEGRAM_AUDIO_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 TELEGRAM_VIDEO_URL = getenv(
     "TELEGRAM_VIDEO_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 STREAM_IMG_URL = getenv(
     "STREAM_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 SOUNCLOUD_IMG_URL = getenv(
     "SOUNCLOUD_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 YOUTUBE_IMG_URL = getenv(
     "YOUTUBE_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 SPOTIFY_ARTIST_IMG_URL = getenv(
     "SPOTIFY_ARTIST_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 SPOTIFY_ALBUM_IMG_URL = getenv(
     "SPOTIFY_ALBUM_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 SPOTIFY_PLAYLIST_IMG_URL = getenv(
     "SPOTIFY_PLAYLIST_IMG_URL",
-    "https://iili.io/F5kvTXI.md.jpg",
+    "https://graph.org/file/df60a4160209a6ca58eb2-6473d069fe73f4f397.jpg",
 )
 
 
