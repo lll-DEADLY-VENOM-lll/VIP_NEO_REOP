@@ -1,4 +1,5 @@
 pyromod
+blinker
 openai
 aiofiles
 aiohttp
