@@ -1,13 +1,4 @@
-# Copyright (C) 2024 by VISHAL-PANDEY@Github, < https://github.com/vishalpandeynkp1 >.
-
 import asyncio
-
-# --- EVENT LOOP FIX ---
-try:
-    asyncio.get_event_loop()
-except RuntimeError:
-    asyncio.set_event_loop(asyncio.new_event_loop())
-
 import pyrogram
 import pyromod.listen  # noqa
 from pyrogram import Client
@@ -20,18 +11,20 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
+from pyrogram.errors import PeerIdInvalid, ChatWriteForbidden
 
 import config
 from ..logging import LOGGER
 
 class VIPBot(Client):
     def __init__(self):
-        LOGGER(__name__).info(f"Starting Bot")
+        LOGGER(__name__).info(f"Starting Bot...")
         super().__init__(
             "VIPMUSIC",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             bot_token=config.BOT_TOKEN,
+            plugins=dict(root="VIPMUSIC.plugins"),
         )
 
     async def start(self):
@@ -39,76 +32,82 @@ class VIPBot(Client):
         get_me = await self.get_me()
         self.username = get_me.username
         self.id = get_me.id
-        self.name = self.me.first_name + " " + (self.me.last_name or "")
-        self.mention = self.me.mention
+        self.name = f"{get_me.first_name} {get_me.last_name or ''}"
+        self.mention = get_me.mention
 
         button = InlineKeyboardMarkup([[InlineKeyboardButton(text="๏ ᴀᴅᴅ ᴍᴇ ɪɴ ɢʀᴏᴜᴘ ๏", url=f"https://t.me/{self.username}?startgroup=true")]])
 
-        # Safe Log Group Check
+        # --- LOG GROUP ---
         if config.LOG_GROUP_ID:
             try:
+                log_group_id = int(config.LOG_GROUP_ID)
                 await self.send_photo(
-                    config.LOG_GROUP_ID,
+                    chat_id=log_group_id,
                     photo=config.START_IMG_URL,
                     caption=f"╔════❰𝐖𝐄𝐋𝐂𝐎𝐌𝐄❱════❍⊱❁۪۪\n║\n║┣⪼🥀𝐁𝐨𝐭 𝐒𝐭𝐚𝐫𝐭ᴇᴅ 𝐁𝐚𝐛𝐲🎉\n║\n║┣⪼ {self.name}\n║\n║┣⪼🎈𝐈𝐃:- `{self.id}` \n║\n║┣⪼🎄@{self.username} \n║ \n║┣⪼💖𝐓𝐡𝐚𝐧𝐤𝐬 𝐅𝐨ʀ 𝐔𝐬𝐢𝐧𝐠😍\n║\n╚════════════════❍⊱❁",
                     reply_markup=button,
                 )
-            except Exception:
-                LOGGER(__name__).error("Log Group access failed. Bot starting without logs.")
+            except Exception as e:
+                LOGGER(__name__).error(f"Log Group Error: {e}")
 
-        # --- SETTING EXTRA COMMANDS ---
+        # --- EXTRA COMMANDS LIST ---
         if config.SET_CMDS:
             try:
-                # Commands for Private Chats
+                # 1. Commands for Everyone in Private
                 await self.set_bot_commands(
                     commands=[
-                        BotCommand("start", "Start the bot"),
-                        BotCommand("help", "Get help menu"),
-                        BotCommand("ping", "Check bot status"),
-                        BotCommand("id", "Get your user ID"),
+                        BotCommand("start", "Bot ko start karein"),
+                        BotCommand("help", "Help menu dekhein"),
+                        BotCommand("ping", "Bot ki speed check karein"),
+                        BotCommand("id", "Apni ID jaaniye"),
+                        BotCommand("repo", "Bot ka source code"),
+                        BotCommand("stats", "Bot ke stats dekhein"),
                     ],
                     scope=BotCommandScopeAllPrivateChats(),
                 )
 
-                # Commands for Group Admins (FULL LIST)
+                # 2. Commands for Group Admins (The Big List)
                 await self.set_bot_commands(
                     commands=[
-                        # Music Commands
-                        BotCommand("play", "Play requested song"),
-                        BotCommand("vplay", "Play video song"),
-                        BotCommand("pause", "Pause music"),
-                        BotCommand("resume", "Resume music"),
-                        BotCommand("skip", "Skip current track"),
-                        BotCommand("stop", "Stop music & clear queue"),
-                        BotCommand("queue", "Check song queue"),
-                        BotCommand("lyrics", "Get song lyrics"),
-                        BotCommand("song", "Download audio song"),
-                        BotCommand("video", "Download video song"),
+                        # Music
+                        BotCommand("play", "Gaana bajayein (Audio)"),
+                        BotCommand("vplay", "Video gaana bajayein"),
+                        BotCommand("pause", "Gaana rokein"),
+                        BotCommand("resume", "Gaana wapas chalayein"),
+                        BotCommand("skip", "Agla gaana bajayein"),
+                        BotCommand("stop", "Music band karein"),
+                        BotCommand("queue", "Gaanon ki list dekhein"),
+                        BotCommand("playlist", "Apni playlist chalayein"),
                         
-                        # Management & Utility
-                        BotCommand("settings", "Bot settings"),
-                        BotCommand("reload", "Reload bot database"),
-                        BotCommand("vctag", "Tag all for Voice Chat"),
-                        BotCommand("stopvctag", "Stop VC tagging"),
-                        BotCommand("tagall", "Mention all members"),
-                        BotCommand("cancel", "Cancel ongoing tag"),
-                        BotCommand("gstats", "Check global stats"),
-                        BotCommand("repo", "Get bot repository"),
-                        BotCommand("update", "Update the bot"),
+                        # Admin Tools
+                        BotCommand("settings", "Bot settings manage karein"),
+                        BotCommand("reload", "Admin list update karein"),
+                        BotCommand("ban", "User ko ban karein"),
+                        BotCommand("unban", "User ko unban karein"),
+                        BotCommand("mute", "User ko mute karein"),
+                        BotCommand("unmute", "User ko unmute karein"),
+                        BotCommand("purge", "Messages delete karein"),
                         
-                        # Fun Commands
-                        BotCommand("gali", "Fun reply"),
-                        BotCommand("shayari", "Get a shayari"),
-                        BotCommand("love", "Love status/shayari"),
-                        BotCommand("joke", "Get a random joke"),
+                        # Tagging & Fun
+                        BotCommand("tagall", "Sabko mention karein"),
+                        BotCommand("vctag", "Voice Chat ke liye tag karein"),
+                        BotCommand("stopvctag", "Tagging rokein"),
+                        BotCommand("shayari", "Ek shayari sunein"),
+                        BotCommand("joke", "Ek joke sunein"),
+                        BotCommand("love", "Love percentage check karein"),
+                        BotCommand("gali", "Fun reply (Masti)"),
                         
-                        # Sudo/Owner Only (Visible to Admins)
-                        BotCommand("sudolist", "Check sudo users list"),
-                        BotCommand("owner", "Check bot owner"),
+                        # Search
+                        BotCommand("song", "Gaana download karein"),
+                        BotCommand("video", "Video download karein"),
+                        BotCommand("lyrics", "Gaanon ke lyrics"),
                     ],
                     scope=BotCommandScopeAllChatAdministrators(),
                 )
             except Exception as e:
-                LOGGER(__name__).error(f"Failed to set bot commands: {e}")
+                LOGGER(__name__).error(f"Failed to set extra commands: {e}")
 
-        LOGGER(__name__).info(f"MusicBot Started as {self.name}")
+        LOGGER(__name__).info(f"VIP Music Bot Started: {self.name}")
+
+    async def stop(self):
+        await super().stop()
