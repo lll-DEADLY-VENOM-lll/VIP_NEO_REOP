@@ -1,23 +1,12 @@
 # Copyright (C) 2024 by VISHAL-PANDEY@Github, < https://github.com/vishalpandeynkp1 >.
-#
-# This file is part of < https://github.com/vishalpandeynkp1/VIPNOBITAMUSIC_REPO > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/vishalpandeynkp1/VIPNOBITAMUSIC_REPO/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 import asyncio
-import uvloop
 
-# --- EVENT LOOP FIX FOR PYTHON 3.10+ ---
+# --- EVENT LOOP FIX ---
 try:
     asyncio.get_event_loop()
 except RuntimeError:
     asyncio.set_event_loop(asyncio.new_event_loop())
-
-uvloop.install()
-# ---------------------------------------
 
 import pyrogram
 import pyromod.listen  # noqa
@@ -34,7 +23,6 @@ from pyrogram.types import (
 
 import config
 from ..logging import LOGGER
-
 
 class VIPBot(Client):
     def __init__(self):
@@ -54,19 +42,9 @@ class VIPBot(Client):
         self.name = self.me.first_name + " " + (self.me.last_name or "")
         self.mention = self.me.mention
 
-        # Create the button
-        button = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="๏ ᴀᴅᴅ ᴍᴇ ɪɴ ɢʀᴏᴜᴘ ๏",
-                        url=f"https://t.me/{self.username}?startgroup=true",
-                    )
-                ]
-            ]
-        )
+        button = InlineKeyboardMarkup([[InlineKeyboardButton(text="๏ ᴀᴅᴅ ᴍᴇ ɪɴ ɢʀᴏᴜᴘ ๏", url=f"https://t.me/{self.username}?startgroup=true")]])
 
-        # Try to send a message to the logger group
+        # Safe Log Group Check
         if config.LOG_GROUP_ID:
             try:
                 await self.send_photo(
@@ -75,93 +53,62 @@ class VIPBot(Client):
                     caption=f"╔════❰𝐖𝐄𝐋𝐂𝐎𝐌𝐄❱════❍⊱❁۪۪\n║\n║┣⪼🥀𝐁𝐨𝐭 𝐒𝐭𝐚𝐫𝐭ᴇᴅ 𝐁𝐚𝐛𝐲🎉\n║\n║┣⪼ {self.name}\n║\n║┣⪼🎈𝐈𝐃:- `{self.id}` \n║\n║┣⪼🎄@{self.username} \n║ \n║┣⪼💖𝐓𝐡𝐚𝐧𝐤𝐬 𝐅𝐨ʀ 𝐔𝐬𝐢𝐧𝐠😍\n║\n╚════════════════❍⊱❁",
                     reply_markup=button,
                 )
-            except pyrogram.errors.ChatWriteForbidden as e:
-                LOGGER(__name__).error(f"Bot cannot write to the log group: {e}")
-                try:
-                    await self.send_message(
-                        config.LOG_GROUP_ID,
-                        f"╔═══❰𝐖𝐄𝐋𝐂𝐎𝐌𝐄❱═══❍⊱❁۪۪\n║\n║┣⪼🥀𝐁𝐨𝐭 𝐒𝐭𝐚𝐫𝐭ᴇᴅ 𝐁𝐚𝐛𝐲🎉\n║\n║◈ {self.name}\n║\n║┣⪼🎈𝐈𝐃:- `{self.id}` \n║\n║┣⪼🎄@{self.username} \n║ \n║┣⪼💖𝐓𝐡𝐚𝐧𝐤𝐬 𝐅𝐨ʀ 𝐔𝐬𝐢𝐧𝐠😍\n║\n╚══════════════❍⊱❁",
-                        reply_markup=button,
-                    )
-                except Exception as e:
-                    LOGGER(__name__).error(f"Failed to send message in log group: {e}")
-            except Exception as e:
-                LOGGER(__name__).error(
-                    f"Unexpected error while sending to log group: {e}"
-                )
-        else:
-            LOGGER(__name__).warning(
-                "LOG_GROUP_ID is not set, skipping log group notifications."
-            )
+            except Exception:
+                LOGGER(__name__).error("Log Group access failed. Bot starting without logs.")
 
-        # Setting commands
+        # --- SETTING EXTRA COMMANDS ---
         if config.SET_CMDS:
             try:
+                # Commands for Private Chats
                 await self.set_bot_commands(
                     commands=[
                         BotCommand("start", "Start the bot"),
-                        BotCommand("help", "Get the help menu"),
-                        BotCommand("ping", "Check if the bot is alive or dead"),
+                        BotCommand("help", "Get help menu"),
+                        BotCommand("ping", "Check bot status"),
+                        BotCommand("id", "Get your user ID"),
                     ],
                     scope=BotCommandScopeAllPrivateChats(),
                 )
+
+                # Commands for Group Admins (FULL LIST)
                 await self.set_bot_commands(
                     commands=[
-                        BotCommand("play", "Start playing requested song"),
-                        BotCommand("stop", "Stop the current song"),
-                        BotCommand("pause", "Pause the current song"),
-                        BotCommand("resume", "Resume the paused song"),
-                        BotCommand("queue", "Check the queue of songs"),
-                        BotCommand("skip", "Skip the current song"),
-                        BotCommand("volume", "Adjust the music volume"),
-                        BotCommand("lyrics", "Get lyrics of the song"),
-                    ],
-                    scope=BotCommandScopeAllGroupChats(),
-                )
-                await self.set_bot_commands(
-                    commands=[
-                        BotCommand("start", "❥ Start the bot"),
-                        BotCommand("ping", "❥ Check the ping"),
-                        BotCommand("help", "❥ Get help"),
-                        BotCommand("vctag", "❥ Tag all for voice chat"),
-                        BotCommand("stopvctag", "❥ Stop tagging for VC"),
-                        BotCommand("tagall", "❥ Tag all members by text"),
-                        BotCommand("cancel", "❥ Cancel the tagging"),
-                        BotCommand("settings", "❥ Get the settings"),
-                        BotCommand("reload", "❥ Reload the bot"),
-                        BotCommand("play", "❥ Play the requested song"),
-                        BotCommand("vplay", "❥ Play video along with music"),
-                        BotCommand("end", "❥ Empty the queue"),
-                        BotCommand("playlist", "❥ Get the playlist"),
-                        BotCommand("stop", "❥ Stop the song"),
-                        BotCommand("lyrics", "❥ Get the song lyrics"),
-                        BotCommand("song", "❥ Download the requested song"),
-                        BotCommand("video", "❥ Download the requested video song"),
-                        BotCommand("gali", "❥ Reply with fun"),
-                        BotCommand("shayri", "❥ Get a shayari"),
-                        BotCommand("love", "❥ Get a love shayari"),
-                        BotCommand("sudolist", "❥ Check the sudo list"),
-                        BotCommand("owner", "❥ Check the owner"),
-                        BotCommand("update", "❥ Update bot"),
-                        BotCommand("gstats", "❥ Get stats of the bot"),
-                        BotCommand("repo", "❥ Check the repo"),
+                        # Music Commands
+                        BotCommand("play", "Play requested song"),
+                        BotCommand("vplay", "Play video song"),
+                        BotCommand("pause", "Pause music"),
+                        BotCommand("resume", "Resume music"),
+                        BotCommand("skip", "Skip current track"),
+                        BotCommand("stop", "Stop music & clear queue"),
+                        BotCommand("queue", "Check song queue"),
+                        BotCommand("lyrics", "Get song lyrics"),
+                        BotCommand("song", "Download audio song"),
+                        BotCommand("video", "Download video song"),
+                        
+                        # Management & Utility
+                        BotCommand("settings", "Bot settings"),
+                        BotCommand("reload", "Reload bot database"),
+                        BotCommand("vctag", "Tag all for Voice Chat"),
+                        BotCommand("stopvctag", "Stop VC tagging"),
+                        BotCommand("tagall", "Mention all members"),
+                        BotCommand("cancel", "Cancel ongoing tag"),
+                        BotCommand("gstats", "Check global stats"),
+                        BotCommand("repo", "Get bot repository"),
+                        BotCommand("update", "Update the bot"),
+                        
+                        # Fun Commands
+                        BotCommand("gali", "Fun reply"),
+                        BotCommand("shayari", "Get a shayari"),
+                        BotCommand("love", "Love status/shayari"),
+                        BotCommand("joke", "Get a random joke"),
+                        
+                        # Sudo/Owner Only (Visible to Admins)
+                        BotCommand("sudolist", "Check sudo users list"),
+                        BotCommand("owner", "Check bot owner"),
                     ],
                     scope=BotCommandScopeAllChatAdministrators(),
                 )
             except Exception as e:
                 LOGGER(__name__).error(f"Failed to set bot commands: {e}")
-
-        # Check if bot is an admin in the logger group
-        if config.LOG_GROUP_ID:
-            try:
-                chat_member_info = await self.get_chat_member(
-                    config.LOG_GROUP_ID, self.id
-                )
-                if chat_member_info.status != ChatMemberStatus.ADMINISTRATOR:
-                    LOGGER(__name__).error(
-                        "Please promote Bot as Admin in Logger Group"
-                    )
-            except Exception as e:
-                LOGGER(__name__).error(f"Error occurred while checking bot status: {e}")
 
         LOGGER(__name__).info(f"MusicBot Started as {self.name}")
