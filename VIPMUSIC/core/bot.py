@@ -3,9 +3,6 @@
 # This file is part of < https://github.com/vishalpandeynkp1/VIPNOBITAMUSIC_REPO > project,
 # and is released under the "GNU v3.0 License Agreement".
 
-import uvloop
-uvloop.install()
-
 import pyrogram
 import pyromod.listen  # noqa
 from pyrogram import Client
