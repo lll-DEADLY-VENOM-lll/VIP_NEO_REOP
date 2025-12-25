@@ -45,7 +45,7 @@ DURATION_LIMIT_MIN = int(
 
 EXTRA_PLUGINS = getenv(
     "EXTRA_PLUGINS",
-    "True",
+    "false",
 )
 
 # Fill True if you want to load extra plugins
@@ -70,12 +70,12 @@ SONG_DOWNLOAD_DURATION = int(
 
 
 # You'll need a Private Group ID for this.
-LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1002512951867"))
+LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1003034048678"))
 
 
 # Your User ID.
 OWNER_ID = list(
-    map(int, getenv("OWNER_ID", "8140988754").split())
+    map(int, getenv("OWNER_ID", "7967418569").split())
 )  # Input type must be interger
 
 
