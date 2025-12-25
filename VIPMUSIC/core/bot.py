@@ -4,11 +4,12 @@
 # and is released under the "GNU v3.0 License Agreement".
 # Please see < https://github.com/vishalpandeynkp1/VIPNOBITAMUSIC_REPO/blob/master/LICENSE >
 #
-# All rights reserv
+# All rights reserved
 
 import pyrogram
 import pyromod.listen  # noqa
 from pyrogram import Client
+from pyrogram.errors import ChatWriteForbidden, PeerIdInvalid
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.types import (
     BotCommand,
@@ -20,7 +21,6 @@ from pyrogram.types import (
 )
 
 import config
-
 from ..logging import LOGGER
 
 
@@ -54,33 +54,36 @@ class VIPBot(Client):
             ]
         )
 
-        # Try to send a message to the logger group
+        # Log Group Notification Logic
         if config.LOG_GROUP_ID:
             try:
+                # VPS par ID kabhi string hoti hai, isliye int() lagana zaroori hai
+                log_group_id = int(config.LOG_GROUP_ID)
+                
                 await self.send_photo(
-                    config.LOG_GROUP_ID,
+                    log_group_id,
                     photo=config.START_IMG_URL,
                     caption=f"╔════❰𝐖𝐄𝐋𝐂𝐎𝐌𝐄❱════❍⊱❁۪۪\n║\n║┣⪼🥀𝐁𝐨𝐭 𝐒𝐭𝐚𝐫𝐭𝐞𝐝 𝐁𝐚𝐛𝐲🎉\n║\n║┣⪼ {self.name}\n║\n║┣⪼🎈𝐈𝐃:- `{self.id}` \n║\n║┣⪼🎄@{self.username} \n║ \n║┣⪼💖𝐓𝐡𝐚𝐧𝐤𝐬 𝐅𝐨𝐫 𝐔𝐬𝐢𝐧𝐠😍\n║\n╚════════════════❍⊱❁",
                     reply_markup=button,
                 )
-            except pyrogram.errors.ChatWriteForbidden as e:
-                LOGGER(__name__).error(f"Bot cannot write to the log group: {e}")
+            except (ValueError, TypeError):
+                LOGGER(__name__).error("LOG_GROUP_ID galat hai! Config check karein (Sirf numbers hone chahiye).")
+            except PeerIdInvalid:
+                LOGGER(__name__).error("Bot ko Log Group nahi mil raha. Kya bot group mein added hai?")
+            except ChatWriteForbidden:
+                LOGGER(__name__).error("Bot ke paas Log Group mein message bhejne ki permission nahi hai.")
                 try:
                     await self.send_message(
-                        config.LOG_GROUP_ID,
+                        int(config.LOG_GROUP_ID),
                         f"╔═══❰𝐖𝐄𝐋𝐂𝐎𝐌𝐄❱═══❍⊱❁۪۪\n║\n║┣⪼🥀𝐁𝐨𝐭 𝐒𝐭𝐚𝐫𝐭𝐞𝐝 𝐁𝐚𝐛𝐲🎉\n║\n║◈ {self.name}\n║\n║┣⪼🎈𝐈𝐃:- `{self.id}` \n║\n║┣⪼🎄@{self.username} \n║ \n║┣⪼💖𝐓𝐡𝐚𝐧𝐤𝐬 𝐅𝐨𝐫 𝐔𝐬𝐢𝐧𝐠😍\n║\n╚══════════════❍⊱❁",
                         reply_markup=button,
                     )
                 except Exception as e:
-                    LOGGER(__name__).error(f"Failed to send message in log group: {e}")
+                    LOGGER(__name__).error(f"Text message bhi fail ho gaya: {e}")
             except Exception as e:
-                LOGGER(__name__).error(
-                    f"Unexpected error while sending to log group: {e}"
-                )
+                LOGGER(__name__).error(f"Unexpected error while sending to log group: {e}")
         else:
-            LOGGER(__name__).warning(
-                "LOG_GROUP_ID is not set, skipping log group notifications."
-            )
+            LOGGER(__name__).warning("LOG_GROUP_ID set nahi hai, skip kar raha hoon.")
 
         # Setting commands
         if config.SET_CMDS:
@@ -142,14 +145,13 @@ class VIPBot(Client):
         # Check if bot is an admin in the logger group
         if config.LOG_GROUP_ID:
             try:
-                chat_member_info = await self.get_chat_member(
-                    config.LOG_GROUP_ID, self.id
-                )
+                chat_member_info = await self.get_chat_member(int(config.LOG_GROUP_ID), self.id)
                 if chat_member_info.status != ChatMemberStatus.ADMINISTRATOR:
-                    LOGGER(__name__).error(
-                        "Please promote Bot as Admin in Logger Group"
-                    )
+                    LOGGER(__name__).error("Please promote Bot as Admin in Logger Group")
             except Exception as e:
-                LOGGER(__name__).error(f"Error occurred while checking bot status: {e}")
+                LOGGER(__name__).error(f"Error checking admin status: {e}")
 
         LOGGER(__name__).info(f"MusicBot Started as {self.name}")
+
+    async def stop(self):
+        await super().stop()
